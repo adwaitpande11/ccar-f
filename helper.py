@@ -11,6 +11,15 @@ def add_assistant_message(messages, text):
     assistant_message = {"role": "assistant", "content": text}
     messages.append(assistant_message)
 
+def add_tool_message(messages, tool_use_id, text=None, is_error=False):
+    tool_message = {"role": "user", "content": [{
+        "type": "tool_result",
+        "tool_use_id": tool_use_id,
+        "content": text,
+        "is_error": True if not text else is_error
+    }]}
+    messages.append(tool_message)
+
 def chat(messages, system=None, temperature=1.0):
     params = {
         "model": model,
@@ -24,3 +33,21 @@ def chat(messages, system=None, temperature=1.0):
     
     message = client.messages.create(**params)
     return message.content[0].text
+
+
+def chat_with_tool(messages, system=None, temperature=1.0, tools=None):
+    params = {
+        "model": model,
+        "max_tokens": 1000,
+        "messages": messages,
+        "extra_body": {"temperature": temperature},
+    }
+    
+    if system:
+        params["system"] = system
+
+    if tools:
+        params["tools"] = tools
+    
+    message = client.messages.create(**params)
+    return message.content
