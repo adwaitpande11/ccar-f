@@ -11,13 +11,15 @@ TOOL_MAP = {
 }
 
 messages = []
-add_user_message(messages, "What is the exact time, formatted as HH:MM:SS?")
+add_user_message(messages, "What is the exact time, formatted as HH:MM:SS and also separately as MM/DD/YYYY HH:MM:SS?")
 
 tools_to_invoke = chat_with_tool(messages, tools=[get_current_datetime_schema])
 add_assistant_message(messages, tools_to_invoke)
-tool_result = TOOL_MAP[tools_to_invoke[0].name](**tools_to_invoke[0].input)
 
-add_tool_message(messages, tool_use_id=tools_to_invoke[0].id, text=tool_result)
+for tool_to_invoke in tools_to_invoke:
+    tool_result = TOOL_MAP[tool_to_invoke.name](**tool_to_invoke.input)
+    add_tool_message(messages, tool_use_id=tool_to_invoke.id, text=tool_result)
+
 final_tool_result = chat_with_tool(messages, tools=[get_current_datetime_schema])
 
 pprint(final_tool_result)
