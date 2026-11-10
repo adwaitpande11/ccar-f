@@ -1,7 +1,7 @@
 from anthropic import Anthropic
 
-client = Anthropic(default_headers={"anthropic-version": "2023-06-01"})
-model = "claude-haiku-4-5"
+client = Anthropic()
+model = "claude-haiku-5-5"
 
 def add_user_message(messages, text):
     user_message = {"role": "user", "content": text}
@@ -20,12 +20,11 @@ def add_tool_message(messages, tool_use_id, text=None, is_error=False):
     }]}
     messages.append(tool_message)
 
-def chat(messages, system=None, temperature=1.0):
+def chat(messages, system=None):
     params = {
         "model": model,
         "max_tokens": 1000,
-        "messages": messages,
-        "extra_body": {"temperature": temperature},
+        "messages": messages
     }
     
     if system:
@@ -35,12 +34,11 @@ def chat(messages, system=None, temperature=1.0):
     return message.content[0].text
 
 
-def chat_with_tool(messages, system=None, temperature=1.0, tools=None):
+def chat_with_tool(messages, system=None, tools=None):
     params = {
         "model": model,
         "max_tokens": 1000,
-        "messages": messages,
-        "extra_body": {"temperature": temperature},
+        "messages": messages
     }
     
     if system:
